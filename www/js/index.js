@@ -45,5 +45,39 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+
+    callWebservice: function() {
+        var s = new SOAPCall();
+        s.transportURI = "http://www.w3schools.com/webservices/tempconvert.asmx";
+        s.actionURI = "http://www.w3schools.com/webservices/CelsiusToFahrenheit";
+
+        var p = new SOAPParameter();
+        p.name = "Celsius";
+        p.value = 40;
+
+        var enc = new SOAPEncoding();
+
+        enc = enc.getAssociatedEncoding(
+            "http://schemas.xmlsoap.org/soap/encoding/", false);
+        s.encoding = enc;
+        var coll = enc.schemaCollection;
+        var typ = coll.getType(
+            "integer", "http://www.w3.org/2001/XMLSchema");
+        if (typ) {
+            p.schemaType = typ;
+        }
+
+        s.encode(
+            0,
+            "CelsiusToFahrenheit",
+            "http://www.w3schools.com/webservices/",
+            0,
+            null,
+            1,
+            new Array(p));
+        var aufruf = s.asyncInvoke(ergebnis);
     }
 };
+
+

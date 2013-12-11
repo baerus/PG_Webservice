@@ -1,42 +1,97 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script type="text/javascript" src="phonegap.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+<head>
+    <script type="text/JavaScript" src="js/index.js"></script>
+    <script type="text/JavaScript" src="js/soapclient21.js"></script>
+    <script type="text/JavaScript" src="js/libs/jquery-2.0.3.min.js"></script>
+    <title>Hello World</title>
+    <script type="text/javascript">
+
+//      var url = "http://www.guru4.net/articoli/javascript-soap-client/demo/webservicedemo.asmx";
+
+        function check3() {
+            var soapMessage =
+                '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<soap:Body>'+
+                '<GetAirportInformationByCountry>'+
+                '<country>germany</country>'+
+                '</GetAirportInformationByCountry>'+
+                '</soap:Body>'+
+                '</soap:Envelope>';
+
+            $.ajax({
+//                url: "http://www.webservicex.net/airport.asmx",
+                url: "http://updates.html5rocks.com",
+                type: "POST",
+                dataType: "jsonp",
+                contentType: "text/xml; charset=\"utf-8\"",
+                headers: {
+//                    SOAPAction: "http://localhost/someService/SomeMethod"
+                    SOAPAction: "http://www.webservicex.net/airport.asmx/GetAirportInformationByCountry"
+                },
+                data: soapMessage,
+                success: function(soapResponse){
+                    console.log('succ');
+                }
+            });
+        }
+
+        function check2() {
+                // Make the actual CORS request.
+                // All HTML5 Rocks properties support CORS.
+                var url = 'http://updates.html5rocks.com';
+//                var url = 'http://www.w3schools.com/webservices/tempconvert.asmx?wsdl';
+//                var url = 'http://www.guru4.net/articoli/javascript-soap-client/demo/webservicedemo.asmx';
+
+                var xhr = createCORSRequest('GET', url);
+                if (!xhr) {
+                    alert('CORS not supported');
+                    return;
+                }
+
+                // Response handlers.
+                xhr.onload = function() {
+                    var text = xhr.responseText;
+                    var title = text.match('<title>(.*)?</title>')[1];
+                    alert('Response from CORS request to ' + url + ': ' + title);
+                };
+
+                xhr.onerror = function() {
+                    alert('Woops, there was an error making the request.');
+                };
+
+//                xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+//                xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET');
+
+                console.log(xhr);
+                xhr.send();
+        }
+
+        function createCORSRequest(method, url) {
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+                // Check if the XMLHttpRequest object has a "withCredentials" property.
+                // "withCredentials" only exists on XMLHTTPRequest2 objects.
+                xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+                // Otherwise, check if XDomainRequest.
+                // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+                xhr = new XDomainRequest();
+                xhr.open(method, url);
+            } else {
+                // Otherwise, CORS is not supported by the browser.
+                xhr = null;
+            }
+            return xhr;
+        }
+    </script>
+</head>
+<body>
+    <form>
+        Bitte Zahl eingeben:
+        <input type="text" name="zahl" id="zahl" size="5" />
+        <input type="button" value="Pruefen"
+               onclick="check2();" />
+    </form>
+</body>
 </html>
